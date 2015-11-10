@@ -1,0 +1,16 @@
+
+syntax = "proto3";
+
+package messages;
+
+service Events {
+  rpc GetEvents (EventQuery) returns (stream Event) {}
+}
+
+message EventQuery {
+  string type = 1;
+}
+
+message Event {
+
+}

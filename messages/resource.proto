@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package messages;
+
+service Resources {
+  rpc Get (ResourceQuery) returns (Resource) {}
+  rpc Create (Resource) returns (Resource) {}
+  rpc List (ResourceQuery) returns (stream Resource) {}
+}
+
+message ResourceQuery {
+  string id = 1;
+  int32 type = 2;
+  string name = 3;
+  string project_id = 4;
+}
+
+message ResourceCreate {
+  string
+}
+
+message Resource {
+  string id = 1;
+  string type = 2;
+  bytes fields = 3;
+  string project_id = 4;
+}

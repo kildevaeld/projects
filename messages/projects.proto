@@ -1,0 +1,25 @@
+
+syntax = "proto3";
+
+package messages;
+
+service Projects {
+  rpc Get (ProjectQuery) returns (Project) {}
+  rpc Create (Project) returns (Project) {}
+  rpc List (ProjectQuery) returns (stream Project) {}
+}
+
+
+message ProjectQuery {
+  string id = 1;
+  string name = 2;
+}
+
+
+message Project {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+
