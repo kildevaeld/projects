@@ -30,7 +30,12 @@ func (self *Core) init() error {
 	self.Mediator = pubsub.New(100)
 
 	self.resourceChan = make(chan *database.Resource)
-	self.Resources.Subscribe(self.resourceChan)
+	err := self.Resources.Subscribe(self.resourceChan)
+
+	if err != nil {
+		close(self.resourceChan)
+		return err
+	}
 
 	go func() {
 
@@ -39,7 +44,7 @@ func (self *Core) init() error {
 			case res := <-self.resourceChan:
 				fmt.Printf("added resource %d\n", res.Name)
 				self.Mediator.Publish(ResourceAddEvent, res)
-			default:
+
 			}
 		}
 

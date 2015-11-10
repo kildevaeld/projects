@@ -12,5 +12,6 @@ message EventQuery {
 }
 
 message Event {
-
+  string name = 1;
+  bytes data = 2;
 }

@@ -45,6 +45,8 @@ func (m *EventQuery) String() string { return proto.CompactTextString(m) }
 func (*EventQuery) ProtoMessage()    {}
 
 type Event struct {
+	Name string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (m *Event) Reset()         { *m = Event{} }

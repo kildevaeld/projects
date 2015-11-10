@@ -124,9 +124,11 @@ func wrappedMain() int {
 	})
 
 	if e != nil {
-		fmt.Fprintf(os.Stderr, "Error while initializing core\n%s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Error while initializing core\n%s\n", e.Error())
 		return 1
 	}
+
+	defer core.Close()
 
 	server := server.NewServer(core)
 

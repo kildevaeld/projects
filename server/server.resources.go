@@ -1,8 +1,6 @@
 package server
 
 import (
-	"fmt"
-
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/golang.org/x/net/context"
 	"github.com/kildevaeld/projects/database"
 	"github.com/kildevaeld/projects/messages"
@@ -29,7 +27,7 @@ func (self *resourcesServer) Get(ctx context.Context, q *messages.ResourceQuery)
 func (self *resourcesServer) Create(ctx context.Context, r *messages.ResourceCreate) (*messages.Resource, error) {
 
 	var project database.Project
-	fmt.Printf("MESSAGE %#v\n", r)
+
 	err := self.core.Db.Get(database.ProjectsCol, r.ProjectId, &project)
 
 	if err != nil {

@@ -152,7 +152,7 @@ func NewResources(core *Core, max int) *Resources {
 		core:     core,
 		max:      max,
 		creators: make(map[string]ResourceCreator),
-		channels: make([]chan<- *database.Resource, max),
+		channels: make([]chan<- *database.Resource, 0),
 	}
 }
 
