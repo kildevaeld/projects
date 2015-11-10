@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mitchellh/panicwrap"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/mitchellh/panicwrap"
 )
 
 // This is output if a panic happens.

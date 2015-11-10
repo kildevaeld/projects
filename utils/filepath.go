@@ -10,7 +10,7 @@ func FileExists(path string) bool {
 }
 
 func IsDir(path string) bool {
-	if stat, err := os.Stat(path); err != nil {
+	if stat, err := os.Stat(path); err == nil {
 		return stat.IsDir()
 	}
 	return false

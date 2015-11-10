@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/google.golang.org/grpc"
 	"github.com/kildevaeld/projects/messages"
 	"github.com/kildevaeld/projects/projects"
-	"google.golang.org/grpc"
 )
 
 type Client struct {

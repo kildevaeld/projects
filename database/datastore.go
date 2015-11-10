@@ -3,8 +3,15 @@ package database
 import (
 	"errors"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
+)
+
+type Query map[string]interface{}
+
+const (
+	ResourcesCol = "Resources"
+	ProjectsCol  = "Projects"
 )
 
 type Datastore interface {
@@ -63,6 +70,10 @@ func NewMongoDatastore() (*MongoDatastore, error) {
 		return nil, err
 	}
 	session.SetMode(mgo.Monotonic, true)
+
+	if err = session.Ping(); err != nil {
+		return nil, err
+	}
 
 	return &MongoDatastore{session}, nil
 

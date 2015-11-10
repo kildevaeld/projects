@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/hashicorp/yamux"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/hashicorp/yamux"
 )
 
 // muxBroker is responsible for brokering multiplexed connections by unique ID.

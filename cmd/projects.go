@@ -7,17 +7,19 @@ import (
 	"os"
 	"strings"
 
-	"github.com/codegangsta/cli"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/prompt"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/prompt/form"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/golang.org/x/net/context"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/google.golang.org/grpc"
 	"github.com/kildevaeld/projects/messages"
 	"github.com/kildevaeld/projects/server"
-	"github.com/kildevaeld/prompt"
-	"github.com/kildevaeld/prompt/form"
-	"golang.org/x/net/context"
 )
 
 func wrapError(err error) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
+
+		fmt.Fprintf(os.Stderr, "%v\n", grpc.ErrorDesc(err))
 		os.Exit(1)
 	}
 }
@@ -25,8 +27,9 @@ func wrapError(err error) {
 func projectsCmds(config *Config) []cli.Command {
 	return []cli.Command{
 		cli.Command{
-			Name:    "list",
-			Aliases: []string{"ls"},
+			Name:      "list",
+			Aliases:   []string{"ls"},
+			ArgsUsage: "[glob]",
 			Action: func(ctx *cli.Context) {
 				wrapError(listProjects(ctx, config.Client))
 			},

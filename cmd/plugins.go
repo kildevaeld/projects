@@ -1,6 +1,6 @@
 package main
 
-import "github.com/codegangsta/cli"
+import "github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/codegangsta/cli"
 
 func pluginsCmd(config *Config) cli.Command {
 	return cli.Command{

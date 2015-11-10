@@ -4,8 +4,13 @@ package messages;
 
 service Resources {
   rpc Get (ResourceQuery) returns (Resource) {}
-  rpc Create (Resource) returns (Resource) {}
+  rpc Create (ResourceCreate) returns (Resource) {}
   rpc List (ResourceQuery) returns (stream Resource) {}
+  rpc ListTypes (ResourceQuery) returns (ResourceType) {}
+}
+
+message ResourceType {
+  repeated string types = 1;
 }
 
 message ResourceQuery {
@@ -16,12 +21,16 @@ message ResourceQuery {
 }
 
 message ResourceCreate {
-  string
+  bytes data = 1;
+  string type = 2;
+  string project_id = 3;
+  string name = 4;
 }
 
 message Resource {
   string id = 1;
   string type = 2;
-  bytes fields = 3;
-  string project_id = 4;
+  string name = 3;
+  bytes fields = 4;
+  string project_id = 5;
 }

@@ -7,11 +7,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/codegangsta/cli"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/prompt"
 	"github.com/kildevaeld/projects/projects"
 	"github.com/kildevaeld/projects/server"
 	"github.com/kildevaeld/projects/utils"
-	"github.com/kildevaeld/prompt"
 )
 
 func main() {
@@ -43,6 +43,7 @@ func realMain() int {
 	app := cli.NewApp()
 	app.Name = "projects"
 	app.Version = "0.0.1"
+	app.Usage = "Something something"
 
 	config := Config{
 		Client: client,
@@ -55,6 +56,7 @@ func realMain() int {
 
 	if err != nil {
 		fmt.Fprint(os.Stderr, "%v", err)
+		return 1
 	}
 
 	return 0

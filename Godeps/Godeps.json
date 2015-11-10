@@ -1,0 +1,114 @@
+{
+	"ImportPath": "github.com/kildevaeld/projects",
+	"GoVersion": "go1.5.1",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0-21-g056c9bc",
+			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-163-g70e3fa5",
+			"Rev": "70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13"
+		},
+		{
+			"ImportPath": "github.com/fatih/structs",
+			"Rev": "c701457aaa1ff6709d5e35fccb5c129448e0a37b"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Rev": "d3d78384b82d449651d2435ed329d70f7c48aa56"
+		},
+		{
+			"ImportPath": "github.com/googollee/go-pubsub",
+			"Rev": "03da165131a377b76e9a19859ab62c8237178c71"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/yamux",
+			"Rev": "ddcd0a6ec7c55e29f235e27935bf98d302281bd3"
+		},
+		{
+			"ImportPath": "github.com/kardianos/osext",
+			"Rev": "6e7f843663477789fac7c02def0d0909e969b4e5"
+		},
+		{
+			"ImportPath": "github.com/kildevaeld/go-ascii",
+			"Rev": "b201bb65ac498f9f7ad3df4553e556cddbe76dea"
+		},
+		{
+			"ImportPath": "github.com/kildevaeld/go-widgets",
+			"Rev": "5b3913fc6b38f0bd8d4179532dd02fc23995c183"
+		},
+		{
+			"ImportPath": "github.com/kildevaeld/prompt",
+			"Rev": "e1c25d02b13accdf86512f33c349cf3bf3439b7a"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/panicwrap",
+			"Rev": "89dc8accc8fec9dfa9b8e1ffdd6793265253de16"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/prefixedio",
+			"Rev": "89d9b535996bf0a185f85b59578f2e245f9e1724"
+		},
+		{
+			"ImportPath": "github.com/oleiade/reflections",
+			"Comment": "0.1.2-2-g632977f",
+			"Rev": "632977f98cd34d217c4b57d0840ec188b3d3dcaf"
+		},
+		{
+			"ImportPath": "github.com/pkg/term",
+			"Rev": "d7ef5fb23c9838dfaf4731b1dd94aacaedd89181"
+		},
+		{
+			"ImportPath": "github.com/tj/go-spin",
+			"Comment": "1.0.0-9-g4bd47d3",
+			"Rev": "4bd47d3603b5c0460028794fbbf207f881088c08"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Rev": "69aba3eabf3ef86516c9643ecb6d3785ca3b8436"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "575fdbe86e5dd89229707ebec0575ce7d088a4a6"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "042ba42fa6633b34205efc66ba5719cd3afd8d38"
+		},
+		{
+			"ImportPath": "golang.org/x/net/http2",
+			"Rev": "042ba42fa6633b34205efc66ba5719cd3afd8d38"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/timeseries",
+			"Rev": "042ba42fa6633b34205efc66ba5719cd3afd8d38"
+		},
+		{
+			"ImportPath": "golang.org/x/net/trace",
+			"Rev": "042ba42fa6633b34205efc66ba5719cd3afd8d38"
+		},
+		{
+			"ImportPath": "google.golang.org/grpc",
+			"Rev": "1684e4a49ba8e6c88a8628b26395f310a1e3d99f"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2",
+			"Comment": "r2015.10.05-1-g4d04138",
+			"Rev": "4d04138ffef2791c479c0c8bbffc30b34081b8d9"
+		},
+		{
+			"ImportPath": "gopkg.in/tomb.v2",
+			"Rev": "14b3d72120e8d10ea6e6b7f87f7175734b1faab8"
+		}
+	]
+}

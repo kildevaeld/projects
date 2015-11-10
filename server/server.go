@@ -5,11 +5,10 @@ import (
 	"net"
 	"path/filepath"
 
-	"gopkg.in/tomb.v2"
-
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/google.golang.org/grpc"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/tomb.v2"
 	"github.com/kildevaeld/projects/messages"
 	"github.com/kildevaeld/projects/projects"
-	"google.golang.org/grpc"
 )
 
 type Server struct {

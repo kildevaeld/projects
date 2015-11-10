@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/BurntSushi/toml"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/BurntSushi/toml"
 	"github.com/kildevaeld/projects/projects"
 	"github.com/kildevaeld/projects/utils"
 )

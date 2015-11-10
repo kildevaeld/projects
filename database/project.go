@@ -3,10 +3,10 @@ package database
 import (
 	"errors"
 
-	"github.com/fatih/structs"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/fatih/structs"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/mitchellh/mapstructure"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
 	"github.com/kildevaeld/projects/messages"
-	"github.com/mitchellh/mapstructure"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type Project struct {
@@ -26,14 +26,16 @@ func (p *Project) ToMessage() *messages.Project {
 }
 
 func NewProjectFromMsg(p *messages.Project) (*Project, error) {
+	m := structs.Map(p)
 
-	if !bson.IsObjectIdHex(p.Id) {
+	if p.Id != "" && !bson.IsObjectIdHex(p.Id) {
 		return nil, errors.New("invalid id format")
 	}
 
-	m := structs.Map(p)
+	if p.Id != "" {
+		m["Id"] = bson.ObjectIdHex(p.Id)
+	}
 
-	m["Id"] = bson.ObjectIdHex(p.Id)
 	var out Project
 	err := mapstructure.Decode(m, &out)
 

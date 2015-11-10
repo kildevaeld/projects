@@ -1,10 +1,11 @@
 package server
 
 import (
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/golang.org/x/net/context"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
 	"github.com/kildevaeld/projects/database"
 	msg "github.com/kildevaeld/projects/messages"
 	"github.com/kildevaeld/projects/projects"
-	"golang.org/x/net/context"
 )
 
 type projectServer struct {
@@ -28,6 +29,10 @@ func (self *projectServer) Create(ctx context.Context, p *msg.Project) (*msg.Pro
 
 	if err != nil {
 		return nil, err
+	}
+
+	if !res.Id.Valid() {
+		res.Id = bson.NewObjectId()
 	}
 
 	err = self.core.Db.Create("Projects", res)

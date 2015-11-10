@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/fatih/structs"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/fatih/structs"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/mitchellh/mapstructure"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
 	"github.com/kildevaeld/projects/messages"
-	"github.com/mitchellh/mapstructure"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type ResourceType int
@@ -20,22 +20,23 @@ const (
 )
 
 type Resource struct {
-	Id     bson.ObjectId `bson:"_id"`
-	Type   ResourceType
-	Name   string
-	Fields map[string]interface{}
+	Id        bson.ObjectId `bson:"_id"`
+	ProjectId bson.ObjectId
+	Type      string
+	Name      string
+	Fields    map[string]interface{}
 }
 
 func (self *Resource) ToMessage() *messages.Resource {
 	m := structs.Map(self)
 	m["Id"] = self.Id.Hex()
-
+	m["ProjectId"] = self.ProjectId.Hex()
 	b, _ := json.Marshal(self.Fields)
 
 	delete(m, "Fields")
 
 	m["Fields"] = b
-	m["Type"] = self.Type.String()
+	//m["Type"] = self.Type.String()
 
 	var out messages.Resource
 	mapstructure.Decode(m, &out)

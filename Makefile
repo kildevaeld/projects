@@ -17,6 +17,7 @@ build-client: build-messages
 
 build-messages:
 	@$(MAKE) -C messages build
+	godep save -r ./...
 
 clean:
 	@rm -rf bin

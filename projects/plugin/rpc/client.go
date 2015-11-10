@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/rpc"
 
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/ugorji/go/codec"
 	"github.com/kildevaeld/projects/projects"
-	"github.com/ugorji/go/codec"
 )
 
 // Client is the client end that communicates with a Packer RPC server.

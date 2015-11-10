@@ -11,11 +11,11 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/mitchellh/panicwrap"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/mitchellh/prefixedio"
 	"github.com/kildevaeld/projects/database"
 	"github.com/kildevaeld/projects/projects"
 	"github.com/kildevaeld/projects/server"
-	"github.com/mitchellh/panicwrap"
-	"github.com/mitchellh/prefixedio"
 )
 
 var ErrorPrefix = "error"
@@ -119,8 +119,13 @@ func wrappedMain() int {
 		return 1
 	}
 
-	core := &projects.Core{
+	core, e := projects.NewCore(projects.CoreConfig{
 		Db: db,
+	})
+
+	if e != nil {
+		fmt.Fprintf(os.Stderr, "Error while initializing core\n%s\n", err.Error())
+		return 1
 	}
 
 	server := server.NewServer(core)
