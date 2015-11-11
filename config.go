@@ -17,6 +17,7 @@ type ServerConfig struct {
 
 type Config struct {
 	Server ServerConfig
+	Path   string
 }
 
 func decodeConfig(reader io.Reader, c *Config) error {

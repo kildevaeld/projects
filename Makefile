@@ -23,7 +23,7 @@ clean:
 	@rm -rf bin
 	@$(MAKE) -C messages clean
 
-install:
+install: build
 	install -m 0755 ./bin/$(CLIENT_BIN) $(PREFIX)/bin
 	install -m 0755 ./bin/$(DAEMON_BIN) $(PREFIX)/bin
 

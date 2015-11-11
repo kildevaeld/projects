@@ -42,13 +42,14 @@ func (self *projectServer) Create(ctx context.Context, p *msg.Project) (*msg.Pro
 
 func (self *projectServer) List(q *msg.ProjectQuery, s msg.Projects_ListServer) error {
 	var ps []*database.Project
-	//ps := make([]msg.Project, 200)
+
 	var err error
 	if q.Name != "" {
 		query := database.Query{
-			"Name": q.Name,
+			"name": database.Query{
+				"$regex": bson.RegEx{q.Name, "is"},
+			},
 		}
-
 		err = self.core.Db.Query("Projects", query, &ps)
 	} else {
 		err = self.core.Db.List("Projects", &ps)

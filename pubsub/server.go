@@ -63,9 +63,11 @@ func (self *PubsubServer) Start() error {
 
 	close := func() {
 		if pub != nil {
+			pub.Unbind(self.config.PubAddress)
 			pub.Close()
 		}
 		if sub != nil {
+			sub.Unbind(self.config.SubAddress)
 			sub.Close()
 		}
 	}
@@ -121,9 +123,11 @@ func (self *PubsubServer) Start() error {
 
 func (self *PubsubServer) Close() error {
 	if self.pub != nil {
+		self.pub.Unbind(self.config.PubAddress)
 		self.pub.Close()
 	}
 	if self.sub != nil {
+		self.sub.Unbind(self.config.SubAddress)
 		self.sub.Close()
 	}
 	if self.events != nil {

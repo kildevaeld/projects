@@ -105,8 +105,8 @@ func wrappedMain() int {
 		return 1
 	}
 
-	//var configDir string
-	//configDir, err = projects.ConfigDir()
+	var configDir string
+	configDir, err = projects.ConfigDir()
 
 	if err != nil {
 		return 1
@@ -120,7 +120,8 @@ func wrappedMain() int {
 	}
 
 	core, e := projects.NewCore(projects.CoreConfig{
-		Db: db,
+		Db:         db,
+		ConfigPath: configDir,
 	})
 
 	if e != nil {
@@ -183,6 +184,8 @@ func loadConfig() (*Config, error) {
 
 	err = decodeConfig(file, &config)
 
+	configdir, _ := projects.ConfigDir()
+	config.Path = configdir
 	return &config, err
 }
 
