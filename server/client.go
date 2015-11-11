@@ -23,6 +23,10 @@ func (self *Client) Resources() messages.ResourcesClient {
 	return messages.NewResourcesClient(self.conn)
 }
 
+func (self *Client) Events() messages.EventsClient {
+	return messages.NewEventsClient(self.conn)
+}
+
 func NewClient() (*Client, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithDialer(func(addr string, timeout time.Duration) (net.Conn, error) {

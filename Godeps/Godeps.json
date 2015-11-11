@@ -24,8 +24,12 @@
 			"Rev": "d3d78384b82d449651d2435ed329d70f7c48aa56"
 		},
 		{
-			"ImportPath": "github.com/googollee/go-pubsub",
-			"Rev": "03da165131a377b76e9a19859ab62c8237178c71"
+			"ImportPath": "github.com/hashicorp/errwrap",
+			"Rev": "7554cd9344cec97297fa6649b055a8c98c2a1e55"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/go-multierror",
+			"Rev": "d30f09973e19c1dfcd120b2d9c4f168e68d6b5d5"
 		},
 		{
 			"ImportPath": "github.com/hashicorp/yamux",
@@ -38,6 +42,10 @@
 		{
 			"ImportPath": "github.com/kildevaeld/go-ascii",
 			"Rev": "b201bb65ac498f9f7ad3df4553e556cddbe76dea"
+		},
+		{
+			"ImportPath": "github.com/kildevaeld/go-pubsub",
+			"Rev": "6441296f03101097e80c39e6f22b259b396ea5d1"
 		},
 		{
 			"ImportPath": "github.com/kildevaeld/go-widgets",
@@ -63,6 +71,10 @@
 			"ImportPath": "github.com/oleiade/reflections",
 			"Comment": "0.1.2-2-g632977f",
 			"Rev": "632977f98cd34d217c4b57d0840ec188b3d3dcaf"
+		},
+		{
+			"ImportPath": "github.com/pebbe/zmq4",
+			"Rev": "2eb538bccbf57df96ce23863cf49d68181d5c711"
 		},
 		{
 			"ImportPath": "github.com/pkg/term",

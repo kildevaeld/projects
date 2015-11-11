@@ -40,7 +40,7 @@ func (s *Server) Start() error {
 	grpcServer := grpc.NewServer(opts...)
 	messages.RegisterProjectsServer(grpcServer, &projectServer{s.core})
 	messages.RegisterResourcesServer(grpcServer, &resourcesServer{s.core})
-
+	messages.RegisterEventsServer(grpcServer, &eventsServer{s.core})
 	//s.core.Log.Infof("project daemon started and listening on %s", socketpath)
 	s.server = grpcServer
 	s.listener = listener

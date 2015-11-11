@@ -117,6 +117,6 @@ func getContext(client *server.Client) (*projects.DirectoryResource, error) {
 
 func initCommands(config *Config) (cmds []cli.Command) {
 	cmds = append(cmds, projectsCmds(config)...)
-	cmds = append(cmds, resourcesCmd(config), pluginsCmd(config))
+	cmds = append(cmds, resourcesCmd(config), pluginsCmd(config), eventCmd(config))
 	return cmds
 }

@@ -3,7 +3,7 @@ package projects
 import (
 	"fmt"
 
-	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/googollee/go-pubsub"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/go-pubsub"
 	"github.com/kildevaeld/projects/database"
 )
 

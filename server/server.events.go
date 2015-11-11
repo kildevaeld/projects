@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/go-pubsub"
 	"github.com/kildevaeld/projects/messages"
 	"github.com/kildevaeld/projects/projects"
 )
@@ -12,20 +13,20 @@ type eventsServer struct {
 }
 
 func (self *eventsServer) GetEvents(q *messages.EventQuery, stream messages.Events_GetEventsServer) (err error) {
-	ch := make(chan interface{})
+	ch := make(chan pubsub.Event)
 
-	core.Mediator.PSubscribe("*", ch)
+	self.core.Mediator.PSubscribe("*", ch)
 
 loop:
 	for {
 		select {
 		case ev := <-ch:
-			b, _ := json.Marshal(ev)
+			b, _ := json.Marshal(ev.Message)
 			e := messages.Event{
-				Name: "",
+				Name: ev.Name,
 				Data: b,
 			}
-			err = stream.Send(&b)
+			err = stream.Send(&e)
 			if err != nil {
 				break loop
 			}
@@ -34,7 +35,7 @@ loop:
 		}
 	}
 
-	core.Mediator.PUnsubscribe("*", ch)
+	self.core.Mediator.PUnsubscribe("*", ch)
 	close(ch)
 	return err
 }
