@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/kildevaeld/projects/projects/plugin"
+	//"github.com/kildevaeld/projects/projects/plugin"
 )
 
 // Prepares the signal handlers so that we handle interrupts properly.
@@ -32,7 +32,7 @@ func setupSignalHandlers() {
 
 		// Force kill all the plugins, but mark that we're killing them
 		// first so that we don't get panics everywhere.
-		plugin.CleanupClients()
+		//plugin.CleanupClients()
 		os.Exit(1)
 	}()
 }

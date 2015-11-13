@@ -2,12 +2,15 @@ package projects
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/go-pubsub"
 	"github.com/kildevaeld/projects/database"
+	"github.com/kildevaeld/projects/projects/plugins"
 	pub "github.com/kildevaeld/projects/pubsub"
+	"github.com/kildevaeld/projects/utils"
 )
 
 const (
@@ -15,8 +18,9 @@ const (
 )
 
 type CoreConfig struct {
-	ConfigPath string
-	Db         database.Datastore
+	ConfigPath  string
+	PluginPaths []string
+	Db          database.Datastore
 }
 
 type Core struct {
@@ -28,6 +32,8 @@ type Core struct {
 	PubSub       *pub.PubsubServer
 	resourceChan chan *database.Resource
 	kill         chan struct{}
+
+	plugins *plugins.PluginHost
 }
 
 func (self *Core) init() error {
@@ -35,8 +41,16 @@ func (self *Core) init() error {
 	self.Resources = NewResources(self, 10)
 	self.Mediator = pubsub.New(100)
 
+	host, err := initPluginHost(self.config)
+
+	if err != nil {
+		return err
+	}
+
+	self.plugins = host
+
 	self.resourceChan = make(chan *database.Resource)
-	err := self.Resources.Subscribe(self.resourceChan)
+	err = self.Resources.Subscribe(self.resourceChan)
 
 	if err != nil {
 		close(self.resourceChan)
@@ -76,6 +90,33 @@ func (self *Core) init() error {
 	}()
 
 	return nil
+}
+
+func initPluginHost(config CoreConfig) (host *plugins.PluginHost, err error) {
+
+	defaultPluginPath := filepath.Join(config.ConfigPath, "plugins")
+
+	if !utils.IsDir(defaultPluginPath) {
+		err = os.MkdirAll(defaultPluginPath, 0755)
+	}
+
+	if err != nil {
+		return
+	}
+
+	paths := append([]string{defaultPluginPath}, config.PluginPaths...)
+
+	if host, err = plugins.NewPluginHost(plugins.HostConfig{
+		Paths:      paths,
+		Publisher:  "tcp://127.0.0.1:4000",
+		Subscriber: "tcp://127.0.0.1:4001",
+	}); err != nil {
+		return
+	}
+
+	err = host.InitAllPlugins()
+
+	return
 }
 
 func (self *Core) Close() error {
