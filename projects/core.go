@@ -9,6 +9,7 @@ import (
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/go-pubsub"
 	"github.com/kildevaeld/projects/database"
 	"github.com/kildevaeld/projects/projects/plugins"
+	"github.com/kildevaeld/projects/projects/types"
 	pub "github.com/kildevaeld/projects/pubsub"
 	"github.com/kildevaeld/projects/utils"
 )
@@ -114,6 +115,22 @@ func initPluginHost(config CoreConfig) (host *plugins.PluginHost, err error) {
 		return
 	}
 
+	go func() {
+
+		for {
+			select {
+			case plugin := <-host.PluginRegister:
+				fmt.Printf("plugin registered %v\n", plugin)
+				plugin.Rpc.RegisterFunc("sys", "RegisterResourceType", func(o types.Message, out *types.Message) error {
+					*out = nil
+					fmt.Printf("%#v\n", o)
+					return nil
+				})
+			}
+		}
+
+	}()
+
 	err = host.InitAllPlugins()
 
 	return
@@ -130,7 +147,9 @@ func (self *Core) Close() error {
 		return err
 	}
 
-	return nil
+	return self.plugins.Close()
+
+	//return nil
 }
 
 func NewCore(config CoreConfig) (*Core, error) {

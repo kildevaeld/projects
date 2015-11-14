@@ -1,0 +1,6 @@
+
+
+Uuid = "80eebedf-a855-4258-af58-0db9f8f9aeb6"
+Name = "vault"
+Version = "0.0.1"
+Exec = "./vault"

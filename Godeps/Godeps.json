@@ -20,6 +20,11 @@
 			"Rev": "c701457aaa1ff6709d5e35fccb5c129448e0a37b"
 		},
 		{
+			"ImportPath": "github.com/gdamore/mangos",
+			"Comment": "v1.1.0-32-gfdf25da",
+			"Rev": "fdf25dac3944c33deff5830fcfdb1fe4c1dd9a26"
+		},
+		{
 			"ImportPath": "github.com/golang/protobuf/proto",
 			"Rev": "d3d78384b82d449651d2435ed329d70f7c48aa56"
 		},
@@ -30,10 +35,6 @@
 		{
 			"ImportPath": "github.com/hashicorp/go-multierror",
 			"Rev": "d30f09973e19c1dfcd120b2d9c4f168e68d6b5d5"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/yamux",
-			"Rev": "ddcd0a6ec7c55e29f235e27935bf98d302281bd3"
 		},
 		{
 			"ImportPath": "github.com/kardianos/osext",
@@ -71,6 +72,10 @@
 			"ImportPath": "github.com/oleiade/reflections",
 			"Comment": "0.1.2-2-g632977f",
 			"Rev": "632977f98cd34d217c4b57d0840ec188b3d3dcaf"
+		},
+		{
+			"ImportPath": "github.com/pborman/uuid",
+			"Rev": "cccd189d45f7ac3368a0d127efb7f4d08ae0b655"
 		},
 		{
 			"ImportPath": "github.com/pebbe/zmq4",

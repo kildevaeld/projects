@@ -96,7 +96,7 @@ func wrappedMain() int {
 
 	log.SetOutput(os.Stderr)
 
-	setupStdin()
+	//setupStdin()
 
 	_, err := loadConfig()
 

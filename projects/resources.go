@@ -8,6 +8,7 @@ import (
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
 	"github.com/kildevaeld/projects/database"
+	"github.com/kildevaeld/projects/projects/types"
 	"github.com/kildevaeld/projects/utils"
 )
 
@@ -109,6 +110,11 @@ func (self *Resources) publish(resource *database.Resource) {
 		default:
 		}
 	}
+}
+
+func (self *Resources) registerResourceType(msg types.Message, out *types.Message) error {
+	fmt.Printf("%#v\n", msg)
+	return nil
 }
 
 func (self *Resources) Register(resourceType string, creator ResourceCreator) error {
