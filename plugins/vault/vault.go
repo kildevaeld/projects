@@ -25,6 +25,7 @@ type ResourceType struct {
 
 func (self *ResourceType) Create(b []byte, out *types.Message) error {
 	*out = nil
+
 	return nil
 }
 
@@ -33,8 +34,11 @@ func (self *ResourceType) Remove() {}
 func main() {
 
 	p, e := plugins.Register(&Plugin{})
+	if e != nil {
+		return
+	}
 
-	p.RegisterResourceType("file", &ResourceType{})
+	e = p.RegisterResourceType("file", &ResourceType{})
 
 	if e != nil {
 		fmt.Printf("error %v", e)

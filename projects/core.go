@@ -1,16 +1,14 @@
 package projects
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/go-pubsub"
 	"github.com/kildevaeld/projects/database"
 	"github.com/kildevaeld/projects/projects/plugins"
 	"github.com/kildevaeld/projects/projects/types"
-	pub "github.com/kildevaeld/projects/pubsub"
 	"github.com/kildevaeld/projects/utils"
 )
 
@@ -28,9 +26,9 @@ type Core struct {
 	Db        database.Datastore
 	Resources *Resources
 
-	config       CoreConfig
-	Mediator     *pubsub.Pubsub
-	PubSub       *pub.PubsubServer
+	config   CoreConfig
+	Mediator *pubsub.Pubsub
+	//PubSub       *pub.PubsubServer
 	resourceChan chan *database.Resource
 	kill         chan struct{}
 
@@ -42,7 +40,7 @@ func (self *Core) init() error {
 	self.Resources = NewResources(self, 10)
 	self.Mediator = pubsub.New(100)
 
-	host, err := initPluginHost(self.config)
+	host, err := initPluginHost(self, self.config)
 
 	if err != nil {
 		return err
@@ -58,20 +56,15 @@ func (self *Core) init() error {
 		return err
 	}
 
-	soc := filepath.Join(self.config.ConfigPath)
+	/*soc := filepath.Join(self.config.ConfigPath)
 	fmt.Printf(soc)
 	self.PubSub, err = pub.NewPubsubServer(pub.PubsubConfig{
 		PubAddress: "ipc://" + filepath.Join(soc, "publish.socket"),
 		SubAddress: "ipc://" + filepath.Join(soc, "subscribe.socket"),
-	})
+	})*/
 
 	self.kill = make(chan struct{})
 
-	if err != nil {
-		return err
-	}
-
-	err = self.PubSub.Start()
 	if err != nil {
 		return err
 	}
@@ -85,6 +78,7 @@ func (self *Core) init() error {
 				self.Mediator.Publish(ResourceAddEvent, res)
 			case <-self.kill:
 				break loop
+
 			}
 		}
 
@@ -93,7 +87,7 @@ func (self *Core) init() error {
 	return nil
 }
 
-func initPluginHost(config CoreConfig) (host *plugins.PluginHost, err error) {
+func initPluginHost(core *Core, config CoreConfig) (host *plugins.PluginHost, err error) {
 
 	defaultPluginPath := filepath.Join(config.ConfigPath, "plugins")
 
@@ -120,11 +114,10 @@ func initPluginHost(config CoreConfig) (host *plugins.PluginHost, err error) {
 		for {
 			select {
 			case plugin := <-host.PluginRegister:
-				fmt.Printf("plugin registered %v\n", plugin)
 				plugin.Rpc.RegisterFunc("sys", "RegisterResourceType", func(o types.Message, out *types.Message) error {
 					*out = nil
-					fmt.Printf("%#v\n", o)
-					return nil
+					creator := resourceTypeCreator{host, o["PluginId"].(string)}
+					return core.Resources.Register(o["Type"].(string), &creator)
 				})
 			}
 		}
@@ -141,11 +134,11 @@ func (self *Core) Close() error {
 	if self.resourceChan != nil {
 		close(self.resourceChan)
 	}
-	if self.PubSub != nil {
+	/*if self.PubSub != nil {
 		err := self.PubSub.Close()
 		time.Sleep(time.Second)
 		return err
-	}
+	}*/
 
 	return self.plugins.Close()
 
@@ -153,7 +146,7 @@ func (self *Core) Close() error {
 }
 
 func NewCore(config CoreConfig) (*Core, error) {
-
+	log.SetPrefix("[CORE] ")
 	core := &Core{
 		Db:     config.Db,
 		config: config,

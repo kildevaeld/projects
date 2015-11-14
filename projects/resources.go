@@ -3,11 +3,13 @@ package projects
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
 	"github.com/kildevaeld/projects/database"
+	"github.com/kildevaeld/projects/projects/plugins"
 	"github.com/kildevaeld/projects/projects/types"
 	"github.com/kildevaeld/projects/utils"
 )
@@ -19,16 +21,37 @@ type ResourceCreateOptions struct {
 	Type    string
 }
 
-var resource_creators = make(map[string]ResourceCreator)
+var resource_creators = make(map[string]types.ResourceType)
 
 type ResourceCreator interface {
 	Create([]byte) (map[string]interface{}, error)
 	Remove(map[string]interface{}) error
 }
 
+type resourceTypeCreator struct {
+	host   *plugins.PluginHost
+	plugin string
+}
+
+func (self *resourceTypeCreator) Create(b []byte, msg *types.Message) error {
+	plugin, err := self.host.Plugin(self.plugin)
+	*msg = nil
+	if err != nil {
+		return err
+	}
+
+	return plugin.Call(plugins.EndpointResourceType+".Create", b, msg)
+
+	//return nil
+}
+
+func (self *resourceTypeCreator) Remove() {
+
+}
+
 type Resources struct {
 	core     *Core
-	creators map[string]ResourceCreator
+	creators map[string]types.ResourceType
 	lock     sync.RWMutex
 	max      int
 	channels []chan<- *database.Resource
@@ -44,7 +67,8 @@ func (self *Resources) Create(options *ResourceCreateOptions) (*database.Resourc
 		return nil, fmt.Errorf("could not find resource type: %s", options.Type)
 	}
 
-	m, err := resType.Create(options.Data)
+	var m types.Message
+	err := resType.Create(options.Data, &m)
 
 	if err != nil {
 		return nil, err
@@ -117,14 +141,14 @@ func (self *Resources) registerResourceType(msg types.Message, out *types.Messag
 	return nil
 }
 
-func (self *Resources) Register(resourceType string, creator ResourceCreator) error {
+func (self *Resources) Register(resourceType string, creator types.ResourceType) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
 	if _, ok := resource_creators[resourceType]; ok {
 		return fmt.Errorf("creator for resource %s already exists", resourceType)
 	}
-
+	log.Printf("registering resource type: %s", resourceType)
 	resource_creators[resourceType] = creator
 
 	return nil
@@ -154,10 +178,11 @@ func (self *Resources) ListResourceTypes() []string {
 }
 
 func NewResources(core *Core, max int) *Resources {
+	log.SetPrefix("[RESOURCES ] ")
 	return &Resources{
 		core:     core,
 		max:      max,
-		creators: make(map[string]ResourceCreator),
+		creators: make(map[string]types.ResourceType),
 		channels: make([]chan<- *database.Resource, 0),
 	}
 }
@@ -186,5 +211,5 @@ func (self *DirectoryResource) Remove(m map[string]interface{}) error {
 }
 
 func init() {
-	resource_creators["directory"] = &DirectoryResource{}
+	//resource_creators["directory"] = &DirectoryResource{}
 }

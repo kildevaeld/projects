@@ -95,9 +95,10 @@ func wrappedMain() int {
 	}
 
 	log.SetOutput(os.Stderr)
-
+	log.SetPrefix("[BOOTSTRAP] ")
 	//setupStdin()
 
+	log.Println("Initializing configuration")
 	_, err := loadConfig()
 
 	if err != nil {
@@ -112,6 +113,7 @@ func wrappedMain() int {
 		return 1
 	}
 
+	log.Println("Initializing datastore")
 	db, err := database.NewMongoDatastore() //database.NewDatabase(filepath.Join(configDir, "database"))
 
 	if err != nil {
@@ -119,18 +121,20 @@ func wrappedMain() int {
 		return 1
 	}
 
+	log.Println("Initializing core")
 	core, e := projects.NewCore(projects.CoreConfig{
 		Db:         db,
 		ConfigPath: configDir,
 	})
 
 	if e != nil {
-		fmt.Fprintf(os.Stderr, "Error while initializing core\n%s\n", e.Error())
+		fmt.Fprintf(os.Stderr, "Error while initializing core\n  %s\n", e.Error())
 		return 1
 	}
 
 	defer core.Close()
 
+	log.Println("Initializing server")
 	server := server.NewServer(core)
 
 	err = run_server(server)
@@ -157,7 +161,8 @@ func run_server(s *server.Server) error {
 		return err
 	}
 
-	<-ch
+	sig := <-ch
+	log.Printf("received termination signal: %s\n", sig.String())
 
 	return s.Stop()
 }
