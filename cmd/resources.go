@@ -3,14 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io"
-	"os"
-	"path/filepath"
-	"text/tabwriter"
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/codegangsta/cli"
-	"github.com/kildevaeld/projects/Godeps/_workspace/src/golang.org/x/net/context"
 	"github.com/kildevaeld/projects/messages"
 )
 
@@ -64,7 +58,7 @@ func resourcesCmd(config *Config) cli.Command {
 }
 
 func listTypes(config *Config) error {
-	types, err := config.Client.Resources().ListTypes(context.Background(), &messages.ResourceQuery{})
+	/*types, err := config.Client.Resources().ListTypes(context.Background(), &messages.ResourceQuery{})
 	if err != nil {
 
 		return err
@@ -72,7 +66,7 @@ func listTypes(config *Config) error {
 
 	for _, t := range types.Types {
 		config.UI.Printf("%s\n", t)
-	}
+	}*/
 
 	return nil
 }
@@ -84,7 +78,7 @@ func parseResourceField(res *messages.Resource) (map[string]interface{}, error) 
 }
 
 func listResources(config *Config, project_id string) error {
-	stream, e := config.Client.Resources().List(context.Background(), &messages.ResourceQuery{})
+	/*stream, e := config.Client.Resources().List(context.Background(), &messages.ResourceQuery{})
 	if e != nil {
 		return e
 	}
@@ -107,13 +101,13 @@ func listResources(config *Config, project_id string) error {
 		//config.UI.Printf("Name: %s, Type: %s\n", h.Color(res.Name), h.Color(res.Type))
 
 	}
-	writer.Flush()
+	writer.Flush()*/
 	return nil
 }
 
 func createResource(config *Config, project_id string, resource string, name string, resType string) error {
 
-	pClient := config.Client.Projects()
+	/*pClient := config.Client.Projects()
 
 	_, e := pClient.Get(context.Background(), &messages.ProjectQuery{
 		Id: project_id,
@@ -181,7 +175,7 @@ func createResource(config *Config, project_id string, resource string, name str
 		return err
 	}
 
-	fmt.Printf("Resource %v", res)
+	fmt.Printf("Resource %v", res)*/
 
 	return nil
 }

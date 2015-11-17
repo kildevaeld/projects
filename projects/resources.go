@@ -50,25 +50,26 @@ func (self *resourceTypeCreator) Remove() {
 }
 
 type Resources struct {
-	core     *Core
-	creators map[string]types.ResourceType
-	lock     sync.RWMutex
-	max      int
-	channels []chan<- *database.Resource
+	core             *Core
+	resourceTypes    map[string]types.ResourceType
+	resourceHandlers map[string]map[string]types.ResourceHandler
+	lock             sync.RWMutex
+	max              int
+	channels         []chan<- *database.Resource
 }
 
 func (self *Resources) Create(options *ResourceCreateOptions) (*database.Resource, error) {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 
-	resType, ok := resource_creators[strings.ToLower(options.Type)]
+	resType, ok := self.resourceTypes[strings.ToLower(options.Type)]
 
 	if !ok {
 		return nil, fmt.Errorf("could not find resource type: %s", options.Type)
 	}
 
-	var m types.Message
-	err := resType.Create(options.Data, &m)
+	//var m types.Message
+	m, err := resType.Create(struct{}{}, options.Data)
 
 	if err != nil {
 		return nil, err
@@ -79,7 +80,7 @@ func (self *Resources) Create(options *ResourceCreateOptions) (*database.Resourc
 		Name:      options.Name,
 		ProjectId: options.Project.Id,
 		Type:      options.Type,
-		Fields:    m,
+		Fields:    *m,
 	}
 
 	err = self.core.Db.Create(database.ResourcesCol, &res)
@@ -141,28 +142,44 @@ func (self *Resources) registerResourceType(msg types.Message, out *types.Messag
 	return nil
 }
 
-func (self *Resources) Register(resourceType string, creator types.ResourceType) error {
+func (self *Resources) RegisterResourceType(resourceType string, creator types.ResourceType) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	if _, ok := resource_creators[resourceType]; ok {
+	if _, ok := self.resourceTypes[resourceType]; ok {
 		return fmt.Errorf("creator for resource %s already exists", resourceType)
 	}
 	log.Printf("registering resource type: %s", resourceType)
-	resource_creators[resourceType] = creator
+	self.resourceTypes[resourceType] = creator
 
 	return nil
 }
 
-func (self *Resources) Unregister(resourceType string) error {
+func (self *Resources) RegisterResourceHandler(resourceType, name string, handler types.ResourceHandler) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	if _, ok := resource_creators[resourceType]; !ok {
+	if resourceHandlers, ok := self.resourceHandlers[resourceType]; ok {
+		if _, ok := resourceHandlers[name]; ok {
+			return fmt.Errorf("resource handler with name: %s already registered", name)
+		}
+		log.Printf("registering resourcehandler %s for type: %s", name, resourceType)
+		resourceHandlers[name] = handler
+
+	}
+
+	return fmt.Errorf("resource type, %s , does not exists", resourceType)
+}
+
+func (self *Resources) UnregisterResourceType(resourceType string) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	if _, ok := self.resourceTypes[resourceType]; !ok {
 		return fmt.Errorf("resource type %s not registered", resourceType)
 	}
 
-	delete(resource_creators, resourceType)
+	delete(self.resourceTypes, resourceType)
 
 	return nil
 }
@@ -171,19 +188,52 @@ func (self *Resources) ListResourceTypes() []string {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 	var keys []string
-	for k, _ := range resource_creators {
+	for k, _ := range self.resourceTypes {
 		keys = append(keys, k)
 	}
 	return keys
 }
 
+func (self *Resources) ListResourceHandlers(resourceType string) ([]string, error) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+	var out []string
+	if resourceHandlers, ok := self.resourceHandlers[resourceType]; ok {
+		for k, _ := range resourceHandlers {
+			out = append(out, k)
+		}
+	} else {
+		return nil, fmt.Errorf("resource type: %s is not registered", resourceType)
+	}
+
+	return out, nil
+}
+
+func (self *Resources) AttachHandler(ctx types.Context, resource *database.Resource, resourceHandler string) error {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+	if resourceHandlers, ok := self.resourceHandlers[resource.Type]; ok {
+		if handler, ok := resourceHandlers[resourceHandler]; ok {
+			if !handler.CanHandle(resource) {
+				return fmt.Errorf("resource handler: %s cannot handle resource", resourceHandler)
+			}
+			return handler.Attach(ctx, resource)
+		}
+
+		return fmt.Errorf("resource handler %s not registed", resourceHandler)
+	} else {
+		return fmt.Errorf("resource type: %s is not registered", resource.Type)
+	}
+}
+
 func NewResources(core *Core, max int) *Resources {
 	log.SetPrefix("[RESOURCES ] ")
 	return &Resources{
-		core:     core,
-		max:      max,
-		creators: make(map[string]types.ResourceType),
-		channels: make([]chan<- *database.Resource, 0),
+		core:             core,
+		max:              max,
+		resourceTypes:    make(map[string]types.ResourceType),
+		resourceHandlers: make(map[string]map[string]types.ResourceHandler),
+		channels:         make([]chan<- *database.Resource, 0),
 	}
 }
 

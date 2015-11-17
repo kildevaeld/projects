@@ -23,6 +23,7 @@ type Config struct {
 func decodeConfig(reader io.Reader, c *Config) error {
 	_, e := toml.DecodeReader(reader, c)
 	return e
+
 }
 
 func (self *Config) Discover() error {

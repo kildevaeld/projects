@@ -8,7 +8,7 @@ import (
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/go-pubsub"
 	"github.com/kildevaeld/projects/database"
 	"github.com/kildevaeld/projects/projects/plugins"
-	"github.com/kildevaeld/projects/projects/types"
+	"github.com/kildevaeld/projects/projects/resources"
 	"github.com/kildevaeld/projects/utils"
 )
 
@@ -55,6 +55,9 @@ func (self *Core) init() error {
 		close(self.resourceChan)
 		return err
 	}
+
+	self.Resources.RegisterResourceType("file", &resources.FileResourceType{})
+	self.Resources.RegisterResourceType("directory", &resources.DirectoryResourceType{})
 
 	/*soc := filepath.Join(self.config.ConfigPath)
 	fmt.Printf(soc)
@@ -109,7 +112,7 @@ func initPluginHost(core *Core, config CoreConfig) (host *plugins.PluginHost, er
 		return
 	}
 
-	go func() {
+	/*go func() {
 
 		for {
 			select {
@@ -122,7 +125,7 @@ func initPluginHost(core *Core, config CoreConfig) (host *plugins.PluginHost, er
 			}
 		}
 
-	}()
+	}()*/
 
 	err = host.InitAllPlugins()
 

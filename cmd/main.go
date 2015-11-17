@@ -11,6 +11,7 @@ import (
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/prompt"
 	"github.com/kildevaeld/projects/projects"
 	"github.com/kildevaeld/projects/server"
+	"github.com/kildevaeld/projects/server2"
 	"github.com/kildevaeld/projects/utils"
 )
 
@@ -19,7 +20,7 @@ func main() {
 }
 
 type Config struct {
-	Client *server.Client
+	Client *server2.Client
 	UI     *prompt.CliUI
 }
 
@@ -27,7 +28,7 @@ func realMain() int {
 
 	log.SetOutput(ioutil.Discard)
 
-	client, err := server.NewClient()
+	client, err := server2.NewClient()
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "Error happended when connecting to server:\n%v\n", err)
 		return 1

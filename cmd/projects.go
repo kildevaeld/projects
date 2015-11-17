@@ -3,17 +3,15 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/codegangsta/cli"
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/prompt"
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/kildevaeld/prompt/form"
-	"github.com/kildevaeld/projects/Godeps/_workspace/src/golang.org/x/net/context"
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/google.golang.org/grpc"
-	"github.com/kildevaeld/projects/messages"
-	"github.com/kildevaeld/projects/server"
+	"github.com/kildevaeld/projects/database"
+	"github.com/kildevaeld/projects/server2"
 )
 
 func wrapError(err error) {
@@ -54,18 +52,19 @@ func projectsCmds(config *Config) []cli.Command {
 	}
 }
 
-func listProjects(ctx *cli.Context, client *server.Client) error {
+func listProjects(ctx *cli.Context, client *server2.Client) error {
 
-	query := messages.ProjectQuery{}
+	/*query := messages.ProjectQuery{}
 
 	if q := ctx.Args().First(); q != "" {
 		query.Name = q
 	}
-
-	var buffer []*messages.Project
-
-	err := prompt.NewProcess("Fetching projects ...", func() error {
-		list, err := client.Projects().List(context.Background(), &query, nil)
+	*/
+	var list []*database.Project
+	var err error
+	err = prompt.NewProcess("Fetching projects ...", func() error {
+		list, err = client.ListProjects(nil)
+		/*list, err := client.Projects().List(context.Background(), &query, nil)
 
 		if err != nil {
 			return err
@@ -82,8 +81,8 @@ func listProjects(ctx *cli.Context, client *server.Client) error {
 			}
 			buffer = append(buffer, m)
 		}
-
-		return nil
+		*/
+		return err
 	})
 
 	if err != nil {
@@ -91,8 +90,8 @@ func listProjects(ctx *cli.Context, client *server.Client) error {
 	}
 
 	var o []string
-	for _, r := range buffer {
-		o = append(o, r.Name+fmt.Sprintf(" (%s)", r.Id))
+	for _, r := range list {
+		o = append(o, r.Name+fmt.Sprintf(" (%s)", r.Id.Hex()))
 	}
 
 	fmt.Printf("%s", strings.Join(o, "\n"))
@@ -109,7 +108,7 @@ func createProject(config *Config, name string, interactive bool) (err error) {
 		}
 	}
 
-	project := &messages.Project{
+	project := &database.Project{
 		Name: name,
 	}
 
@@ -123,11 +122,9 @@ func createProject(config *Config, name string, interactive bool) (err error) {
 		config.UI.Restore()
 	}
 
-	p := config.Client.Projects()
-
 	err = config.UI.Process("Creating %s ...", name).Run(func() error {
-		pp, e := p.Create(context.Background(), project)
-		project = pp
+		e := config.Client.CreateProject(project)
+		//project = pp
 		return e
 	})
 

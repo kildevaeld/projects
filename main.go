@@ -15,7 +15,7 @@ import (
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/mitchellh/prefixedio"
 	"github.com/kildevaeld/projects/database"
 	"github.com/kildevaeld/projects/projects"
-	"github.com/kildevaeld/projects/server"
+	"github.com/kildevaeld/projects/server2"
 )
 
 var ErrorPrefix = "error"
@@ -135,7 +135,7 @@ func wrappedMain() int {
 	defer core.Close()
 
 	log.Println("Initializing server")
-	server := server.NewServer(core)
+	server := server2.NewServer(core)
 
 	err = run_server(server)
 
@@ -147,7 +147,7 @@ func wrappedMain() int {
 	return 0
 }
 
-func run_server(s *server.Server) error {
+func run_server(s *server2.Server) error {
 	//done := make(chan error, 1)
 	//defer close(done)
 	ch := make(chan os.Signal, 1)
@@ -155,7 +155,7 @@ func run_server(s *server.Server) error {
 	signal.Notify(ch, syscall.SIGTERM)
 	defer close(ch)
 
-	err := s.Start()
+	err := s.Listen()
 
 	if err != nil {
 		return err
@@ -164,7 +164,7 @@ func run_server(s *server.Server) error {
 	sig := <-ch
 	log.Printf("received termination signal: %s\n", sig.String())
 
-	return s.Stop()
+	return s.Close()
 }
 
 func loadConfig() (*Config, error) {
