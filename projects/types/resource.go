@@ -33,7 +33,7 @@ type Context interface {
 // Plugin types
 
 type ResourceType interface {
-	Create(Context, []byte) (*Message, error)
+	Create(Context, *database.Resource) (*Message, error)
 	Remove(Context, *database.Resource) error
 	Info(Context, *database.Resource) (*Message, error)
 }

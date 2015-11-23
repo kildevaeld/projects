@@ -57,7 +57,7 @@ func (self *Core) init() error {
 	}
 
 	self.Resources.RegisterResourceType("file", &resources.FileResourceType{})
-	self.Resources.RegisterResourceType("directory", &resources.DirectoryResourceType{})
+	//self.Resources.RegisterResourceType("directory", &resources.DirectoryResourceType{})
 
 	/*soc := filepath.Join(self.config.ConfigPath)
 	fmt.Printf(soc)

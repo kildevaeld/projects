@@ -134,6 +134,10 @@
 		{
 			"ImportPath": "gopkg.in/tomb.v2",
 			"Rev": "14b3d72120e8d10ea6e6b7f87f7175734b1faab8"
+		},
+		{
+			"ImportPath": "gopkg.in/unrolled/render.v1",
+			"Rev": "54bd818bb56dbf2d45d81fe4a52fd28b08935293"
 		}
 	]
 }

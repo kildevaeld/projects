@@ -35,16 +35,32 @@ func (self *Client) ListProjects(q Query) ([]*database.Project, error) {
 	return out, err
 }
 
-func (self *Client) Get(id string) (*database.Project, error) {
+func (self *Client) GetProject(id string) (*database.Project, error) {
 
 	resp, err := self.Do("GET", "/projects/"+id, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var out *database.Project
+	var out database.Project
 	err = self.readBody(resp, &out)
 
-	return out, err
+	return &out, err
 
+}
+
+func (self *Client) UpdateProject(project *database.Project) error {
+	if !project.Id.Valid() {
+		return errors.New("id not valid")
+	}
+
+	resp, err := self.Do("PUT", "/projects/"+project.Id.String(), project)
+
+	if err != nil {
+		return err
+	}
+
+	err = self.readBody(resp, nil)
+
+	return err
 }

@@ -49,39 +49,46 @@ func projectsCmds(config *Config) []cli.Command {
 
 			},
 		},
+		cli.Command{
+			Name: "get",
+			Action: func(ctx *cli.Context) {
+				wrapError(getProject(config, ctx.Args().First()))
+			},
+			Before: func(ctx *cli.Context) error {
+				if len(ctx.Args()) == 0 {
+					return errors.New("usage: projects get <id>")
+				}
+				return nil
+			},
+		},
 	}
+}
+
+func getProject(config *Config, id string) error {
+
+	var project *database.Project
+	var err error
+	/*err = prompt.NewProcess("Fetching projects ...", func() error {
+		project, err = config.Client.GetProject(id)
+		return err
+	})*/
+	project, err = config.Client.GetProject(id)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Project %#v", project)
+
+	return nil
 }
 
 func listProjects(ctx *cli.Context, client *server2.Client) error {
 
-	/*query := messages.ProjectQuery{}
-
-	if q := ctx.Args().First(); q != "" {
-		query.Name = q
-	}
-	*/
 	var list []*database.Project
 	var err error
 	err = prompt.NewProcess("Fetching projects ...", func() error {
 		list, err = client.ListProjects(nil)
-		/*list, err := client.Projects().List(context.Background(), &query, nil)
-
-		if err != nil {
-			return err
-		}
-
-		for {
-			m, e := list.Recv()
-			if e != nil {
-				if e == io.EOF {
-					break
-				} else {
-					return e
-				}
-			}
-			buffer = append(buffer, m)
-		}
-		*/
 		return err
 	})
 

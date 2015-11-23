@@ -18,7 +18,9 @@ type Datastore interface {
 	Create(colName string, item interface{}) error
 	List(colName string, result interface{}) error
 	Get(colName string, id string, result interface{}) error
+	Update(colName string, id string, args interface{}) error
 	Query(colName string, query Query, result interface{}) error
+	Count(colName string, query Query) (int, error)
 	Remove(colName string, id string) error
 }
 
@@ -51,6 +53,10 @@ func (self *MongoDatastore) Get(colName string, id string, result interface{}) e
 	return self.Database().C(colName).FindId(idObject).One(result)
 }
 
+func (self *MongoDatastore) Update(colName string, id string, model interface{}) error {
+	return self.Database().C(colName).UpdateId(id, model)
+}
+
 func (self *MongoDatastore) Query(colName string, query Query, result interface{}) error {
 	return self.Database().C(colName).Find(query).All(result)
 }
@@ -59,12 +65,21 @@ func (self *MongoDatastore) Remove(colName string, id string) error {
 	return self.Database().C(colName).RemoveId(id)
 }
 
+func (self *MongoDatastore) Count(colName string, query Query) (int, error) {
+	q := self.Database().C(colName).Find(&query)
+
+	return q.Count()
+}
+
 func (self *MongoDatastore) Close() {
 	self.session.Close()
 }
 
 func NewMongoDatastore() (*MongoDatastore, error) {
-
+	// mgo.SetDebug(true)
+	// var aLogger *log.Logger
+	// aLogger = log.New(os.Stderr, "", log.LstdFlags)
+	// mgo.SetLogger(aLogger)
 	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		return nil, err

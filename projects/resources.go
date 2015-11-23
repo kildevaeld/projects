@@ -16,9 +16,10 @@ import (
 
 type ResourceCreateOptions struct {
 	Project *database.Project
-	Data    []byte
-	Name    string
-	Type    string
+	//Data    []byte
+	//Name    string
+	//Type    string
+	Resource *database.Resource
 }
 
 var resource_creators = make(map[string]types.ResourceType)
@@ -62,34 +63,39 @@ func (self *Resources) Create(options *ResourceCreateOptions) (*database.Resourc
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 
-	resType, ok := self.resourceTypes[strings.ToLower(options.Type)]
+	resource := options.Resource
+
+	resType, ok := self.resourceTypes[strings.ToLower(resource.Type)]
 
 	if !ok {
-		return nil, fmt.Errorf("could not find resource type: %s", options.Type)
+		return nil, fmt.Errorf("could not find resource type: %s", resource.Type)
 	}
 
 	//var m types.Message
-	m, err := resType.Create(struct{}{}, options.Data)
+	_, err := resType.Create(struct{}{}, resource)
 
 	if err != nil {
 		return nil, err
 	}
 
-	res := database.Resource{
+	resource.Id = bson.NewObjectId()
+	resource.ProjectId = options.Project.Id
+
+	/*res := database.Resource{
 		Id:        bson.NewObjectId(),
 		Name:      options.Name,
 		ProjectId: options.Project.Id,
 		Type:      options.Type,
 		Fields:    *m,
-	}
+	}*/
 
-	err = self.core.Db.Create(database.ResourcesCol, &res)
+	err = self.core.Db.Create(database.ResourcesCol, resource)
 
 	if err == nil {
-		self.publish(&res)
+		self.publish(resource)
 	}
 
-	return &res, err
+	return resource, err
 }
 
 func (self *Resources) Subscribe(ch chan<- *database.Resource) error {

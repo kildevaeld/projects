@@ -23,7 +23,7 @@ func (self *Client) Endpoint(path string) string {
 }
 
 func (self *Client) Do(method, path string, data interface{}) (*http.Response, error) {
-	var body *bytes.Buffer
+	var body *bytes.Buffer = bytes.NewBuffer(nil)
 
 	if data != nil {
 		b, e := json.Marshal(data)

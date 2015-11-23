@@ -12,6 +12,7 @@ import (
 
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/github.com/gorilla/mux"
 	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/tomb.v2"
+	"github.com/kildevaeld/projects/Godeps/_workspace/src/gopkg.in/unrolled/render.v1"
 	"github.com/kildevaeld/projects/projects"
 )
 
@@ -20,29 +21,36 @@ type Query map[string]interface{}
 var errStop = errors.New("errStop")
 
 type Server struct {
-	unixl net.Listener
-	tcpl  net.Listener
-	tomb  tomb.Tomb
-	mux   *mux.Router
-	core  *projects.Core
+	unixl  net.Listener
+	tcpl   net.Listener
+	tomb   tomb.Tomb
+	mux    *mux.Router
+	render *render.Render
+	core   *projects.Core
 }
 
 func (self *Server) init() {
 	self.mux = mux.NewRouter()
+	self.render = render.New()
 
 	self.mux.HandleFunc("/ping", self.servePing).Methods("GET")
 	// Register project routes
+	idMatch := "[a-zA-Z0-9]{24}" // ObjectId.hex
+	projectId := fmt.Sprintf("{project_id:%s}", idMatch)
 	self.mux.HandleFunc("/projects", self.createProject).Methods("POST")
 	self.mux.HandleFunc("/projects", self.listProjects).Methods("GET")
-	self.mux.HandleFunc("/projects/{project_id}", self.getProject).Methods("GET")
-	self.mux.HandleFunc("/projects/{id}", self.updateProject).Methods("PUT")
-	self.mux.HandleFunc("/projects/{id}", self.removeProject).Methods("DELETE")
+	self.mux.HandleFunc("/projects/"+projectId, self.getProject).Methods("GET")
+	self.mux.HandleFunc("/projects/"+projectId, self.updateProject).Methods("PUT")
+	self.mux.HandleFunc("/projects/"+projectId, self.removeProject).Methods("DELETE")
+	self.mux.HandleFunc(fmt.Sprintf("/projects/%s/info", projectId), self.infoProject).Methods("GET")
 	// Resources
-	self.mux.HandleFunc("/resources", self.createResource).Methods("POST")
-	self.mux.HandleFunc("/resources", self.listResources).Methods("GET")
-	self.mux.HandleFunc("/resources/{id}", self.getResource).Methods("GET")
-	self.mux.HandleFunc("/resources/{id}", self.updateResource).Methods("PUT")
-	self.mux.HandleFunc("/resources/{id}", self.removeResource).Methods("DELETE")
+	//resourceId := fmt.Sprint("{resource_id:%s}", idMatch)
+	self.mux.HandleFunc("/projects/{project_id}/resources", self.createResource).Methods("POST")
+	self.mux.HandleFunc("/projects/{project_id}/resources", self.listResources).Methods("GET")
+	self.mux.HandleFunc("/projects/{project_id}/resources/{resource_id}", self.getResource).Methods("GET")
+	self.mux.HandleFunc("/projects/{project_id}/resources/{resource_id}", self.updateResource).Methods("PUT")
+	self.mux.HandleFunc("/projects/{project_id}/resources/{resource_id}", self.removeResource).Methods("DELETE")
+	self.mux.HandleFunc("/projects/{project_id}/resources/{resource_id}/attach", self.removeResource).Methods("POST")
 
 }
 
@@ -109,8 +117,8 @@ func (self *Server) read(r *http.Request, v interface{}) error {
 func (self *Server) writeError(w http.ResponseWriter, err error, status int) {
 
 	q := Query{
-		"code":  status,
-		"error": err.Error(),
+		"status":  status,
+		"message": err.Error(),
 	}
 
 	b, _ := json.Marshal(&q)

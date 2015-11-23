@@ -8,12 +8,12 @@ import (
 type FileResourceType struct {
 }
 
-func (self *FileResourceType) Create(ctx types.Context, b []byte) (*types.Message, error) {
+func (self *FileResourceType) Create(ctx types.Context, resource *database.Resource) (*types.Message, error) {
 
-	str := string(b)
+	//str := string(b)
 
 	msg := types.Message{
-		"Path": str,
+		"Path": "",
 	}
 
 	return &msg, nil

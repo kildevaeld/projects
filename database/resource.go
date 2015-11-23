@@ -20,11 +20,12 @@ const (
 )
 
 type Resource struct {
-	Id        bson.ObjectId `bson:"_id"`
-	ProjectId bson.ObjectId
-	Type      string
-	Name      string
-	Fields    map[string]interface{}
+	Id        bson.ObjectId          `bson:"_id" json:"id"`
+	ProjectId bson.ObjectId          `bson:"project_id" json:"project_id"`
+	Type      string                 `json:"type"`
+	Name      string                 `json:"name"`
+	Fields    map[string]interface{} `json:"fields"`
+	Handlers  []bson.ObjectId        `json:"handlers"`
 }
 
 func (self *Resource) ToMessage() *messages.Resource {
